@@ -1,1 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Aplicativo de treino personalizado">
+  <link rel="manifest" href="manifest.json">
 
+  <title>Meu Treino</title>
+
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --dark: #111827;
+      --gray: #6b7280;
+      --green: #16a34a;
+      --orange: #ea580c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: white;
+      padding: 24px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 700px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .profile {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .profile h2 {
+      margin-top: 0;
+      font-size: 19px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .profile-item {
+      background: #eff6ff;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .profile-item strong {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      padding-bottom: 4px;
+    }
+
+    .tab {
+      border: none;
+      background: #d1d5db;
+      color: #111827;
+      border-radius: 9px;
+      padding: 11px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      min-width: 54px;
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .workout-header {
+      background: var(--card);
+      padding: 16px;
+      border-radius: 14px 14px 0 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .workout-header h2 {
+      margin: 0 0 6px;
+    }
+
+    .workout-header p {
+      margin: 0;
+      color: var(--gray);
+    }
+
+    .exercise {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--card);
+      padding: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .exercise:last-child {
+      border-radius: 0 0 14px 14px;
+    }
+
+    .exercise input {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--green);
+      margin-top: 2px;
+    }
+
+    .exercise-content {
+      flex: 1;
+    }
+
+    .exercise-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .exercise-details {
+      color: var(--gray);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .completed .exercise-name {
+      text-decoration: line-through;
+      color: var(--gray);
+    }
+
+    .timer {
+      background: var(--dark);
+      color: white;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .timer-display {
+      font-size: 36px;
+      font-weight: bold;
+      margin: 8px;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    .timer button,
+    .clear-button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .timer button {
+      background: white;
+      color: var(--dark);
+    }
+
+    .clear-button {
+      background: var(--orange);
+      color: white;
+      width: 100%;
+      margin: 16px 0 0;
+    }
+
+    .progress {
+      margin-top: 16px;
+      background: #dbeafe;
+      border-radius: 10px;
+      padding: 12px;
+      color: #1e40af;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Meu Treino</h1>
+    <p>Hipertrofia, resistência e emagrecimento</p>
+  </header>
+
+  <main>
+    <section class="profile">
+      <h2>Meu perfil</h2>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <strong>Altura</strong>
+          1,71 m
+        </div>
+
+        <div class="profile-item">
+          <strong>Peso inicial</strong>
+          78,1 kg
+        </div>
+
+        <div class="profile-item">
+          <strong>Objetivo</strong>
+          Chegar a 72 kg
+        </div>
+
+        <div class="profile-item">
+          <strong>Frequência</strong>
+          5 dias + cardio
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs" id="tabs"></div>
+
+    <section id="workout"></section>
+
+    <div class="timer">
+      <div>Descanso</div>
+      <div class="timer-display" id="timerDisplay">01:30</div>
+
+      <button onclick="startTimer(60)">60s</button>
+      <button onclick="startTimer(90)">90s</button>
+      <button onclick="startTimer(120)">120s</button>
+      <button onclick="resetTimer()">Zerar</button>
+    </div>
+
+    <div class="progress" id="progress"></div>
+
+    <button class="clear-button" onclick="clearProgress()">
+      Limpar progresso do treino
+    </button>
+  </main>
+
+  <script>
+    const workouts = {
+      A: {
+        title: "Push — Peito, ombros e tríceps",
+        exercises: [
+          ["Supino reto com barra", "3 séries x 5–8 repetições", "Descanso: 2–3 min"],
+          ["Supino inclinado com halteres", "3 séries x 8–10 repetições", "Descanso: 90–120 s"],
+          ["Desenvolvimento sentado", "3 séries x 6–10 repetições", "Descanso: 2 min"],
+          ["Crossover ou crucifixo na polia", "3 séries x 12–15 repetições", "Descanso: 60–90 s"],
+          ["Elevação lateral", "3 séries x 12–20 repetições", "Descanso: 60 s"],
+          ["Tríceps na polia", "3 séries x 10–15 repetições", "Descanso: 60–90 s"],
+          ["Tríceps francês ou testa", "2 séries x 8–12 repetições", "Descanso: 90 s"]
+        ]
+      },
+
+      B: {
+        title: "Pull — Costas, bíceps e deltoide posterior",
+        exercises: [
+          ["Barra fixa ou puxada alta", "3 séries x 6–10 repetições", "Descanso: 2 min"],
+          ["Remada curvada ou articulada", "3 séries x 6–10 repetições", "Descanso: 2 min"],
+          ["Remada unilateral", "3 séries x 8–12 repetições", "Descanso: 90 s"],
+          ["Puxada com braços estendidos", "2 séries x 12–15 repetições", "Descanso: 60–90 s"],
+          ["Face pull", "3 séries x 12–20 repetições", "Descanso: 60 s"],
+          ["Rosca direta", "3 séries x 8–12 repetições", "Descanso: 90 s"],
+          ["Rosca inclinada ou martelo", "3 séries x 10–15 repetições", "Descanso: 60–90 s"]
+        ]
+      },
+
+      C: {
+        title: "Legs — Quadríceps e panturrilhas",
+        exercises: [
+          ["Agachamento livre ou hack squat", "3 séries x 5–8 repetições", "Descanso: 2–3 min"],
+          ["Leg press", "3 séries x 8–12 repetições", "Descanso: 2 min"],
+          ["Afundo búlgaro", "3 séries x 8–12 por perna", "Descanso: 90 s"],
+          ["Cadeira extensora", "3 séries x 12–15 repetições", "Descanso: 60–90 s"],
+          ["Mesa flexora", "3 séries x 10–15 repetições", "Descanso: 90 s"],
+          ["Panturrilha em pé", "4 séries x 8–15 repetições", "Descanso: 60–90 s"],
+          ["Abdominal na polia", "3 séries x 10–15 repetições", "Descanso: 60 s"]
+        ]
+      },
+
+      D: {
+        title: "Upper — Parte superior",
+        exercises: [
+          ["Supino inclinado com barra ou máquina", "3 séries x 8–10 repetições", "Descanso: 2 min"],
+          ["Remada baixa", "3 séries x 8–12 repetições", "Descanso: 2 min"],
+          ["Desenvolvimento em máquina", "3 séries x 8–12 repetições", "Descanso: 90 s"],
+          ["Puxada neutra", "3 séries x 10–12 repetições", "Descanso: 90 s"],
+          ["Elevação lateral na polia", "3 séries x 12–20 repetições", "Descanso: 60 s"],
+          ["Crucifixo inverso", "3 séries x 12–20 repetições", "Descanso: 60 s"],
+          ["Rosca martelo", "2 séries x 10–15 repetições", "Descanso: 60–90 s"],
+          ["Tríceps corda", "2 séries x 10–15 repetições", "Descanso: 60–90 s"]
+        ]
+      },
+
+      E: {
+        title: "Lower — Posterior, glúteos e abdômen",
+        exercises: [
+          ["Levantamento terra romeno", "3 séries x 6–10 repetições", "Descanso: 2–3 min"],
+          ["Hip thrust", "3 séries x 8–12 repetições", "Descanso: 2 min"],
+          ["Hack squat ou agachamento frontal", "3 séries x 8–12 repetições", "Descanso: 2 min"],
+          ["Flexora sentada ou deitada", "3 séries x 10–15 repetições", "Descanso: 90 s"],
+          ["Passada caminhando", "2 séries x 10–12 por perna", "Descanso: 90 s"],
+          ["Panturrilha sentada", "3 séries x 12–20 repetições", "Descanso: 60–90 s"],
+          ["Prancha lateral", "3 séries x 30–45 segundos por lado", "Descanso: 45–60 s"],
+          ["Abdominal reverso", "3 séries x 10–15 repetições", "Descanso: 60 s"]
+        ]
+      }
+    };
+
+    let selectedWorkout = localStorage.getItem("selectedWorkout") || "A";
+    let timerInterval;
+    let timerSeconds = 90;
+
+    function renderTabs() {
+      const tabs = document.getElementById("tabs");
+
+      tabs.innerHTML = Object.keys(workouts).map(letter => `
+        <button
+          class="tab ${letter === selectedWorkout ? "active" : ""}"
+          onclick="selectWorkout('${letter}')">
+          Treino ${letter}
+        </button>
+      `).join("");
+    }
+
+    function renderWorkout() {
+      const workout = workouts[selectedWorkout];
+      const container = document.getElementById("workout");
+
+      container.innerHTML = `
+        <div class="workout-header">
+          <h2>Treino ${selectedWorkout}</h2>
+          <p>${workout.title}</p>
+        </div>
+      `;
+
+      workout.exercises.forEach((exercise, index) => {
+        const key = `${selectedWorkout}-${index}`;
+        const completed = localStorage.getItem(key) === "true";
+
+        container.innerHTML += `
+          <div class="exercise ${completed ? "completed" : ""}" id="exercise-${index}">
+            <input
+              type="checkbox"
+              ${completed ? "checked" : ""}
+              onchange="toggleExercise(${index}, this.checked)">
+
+            <div class="exercise-content">
+              <div class="exercise-name">${exercise[0]}</div>
+              <div class="exercise-details">
+                ${exercise[1]}<br>
+                ${exercise[2]}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      updateProgress();
+    }
+
+    function selectWorkout(letter) {
+      selectedWorkout = letter;
+      localStorage.setItem("selectedWorkout", letter);
+      renderTabs();
+      renderWorkout();
+    }
+
+    function toggleExercise(index, checked) {
+      const key = `${selectedWorkout}-${index}`;
+      localStorage.setItem(key, checked);
+
+      const element = document.getElementById(`exercise-${index}`);
+      element.classList.toggle("completed", checked);
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = workouts[selectedWorkout].exercises.length;
+      let completed = 0;
+
+      for (let i = 0; i < total; i++) {
+        if (localStorage.getItem(`${selectedWorkout}-${i}`) === "true") {
+          completed++;
+        }
+      }
+
+      document.getElementById("progress").textContent =
+        `Progresso: ${completed} de ${total} exercícios concluídos`;
+    }
+
+    function clearProgress() {
+      const total = workouts[selectedWorkout].exercises.length;
+
+      for (let i = 0; i < total; i++) {
+        localStorage.removeItem(`${selectedWorkout}-${i}`);
+      }
+
+      renderWorkout();
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timerSeconds / 60);
+      const seconds = timerSeconds % 60;
+
+      document.getElementById("timerDisplay").textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    }
+
+    function startTimer(seconds) {
+      clearInterval(timerInterval);
+      timerSeconds = seconds;
+      updateTimerDisplay();
+
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        updateTimerDisplay();
+
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          if (navigator.vibrate) navigator.vibrate([300, 200, 300]);
+          alert("Descanso finalizado!");
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerSeconds = 90;
+      updateTimerDisplay();
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js");
+      });
+    }
+
+    renderTabs();
+    renderWorkout();
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
